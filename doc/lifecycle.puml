@@ -1,0 +1,31 @@
+@startuml
+== Phase process-resources ==
+Build -> resources_plugin: execute goal <b>resources</b>
+activate resources_plugin
+resources_plugin -> Build
+deactivate resources_plugin
+
+== Phase compile ==
+Build -> compiler_plugin: execute goal <b>compile</b>
+activate compiler_plugin
+compiler_plugin -> Build
+deactivate compiler_plugin
+
+== Phase process-test-resources ==
+Build -> resources_plugin: execute goal <b>testResources</b>
+activate resources_plugin
+resources_plugin -> Build
+deactivate resources_plugin
+
+== Phase test-compile ==
+Build -> compiler_plugin: execute goal <b>testCompile</b>
+activate compiler_plugin
+compiler_plugin -> Build
+deactivate compiler_plugin
+
+== Phase test ==
+Build -> surefire_plugin: execute goal <b>test</b>
+activate surefire_plugin
+surefire_plugin -> Build
+deactivate surefire_plugin
+@enduml
