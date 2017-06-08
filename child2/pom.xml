@@ -11,5 +11,12 @@
 
     <artifactId>child-2</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.1</version>
+        </dependency>
+    </dependencies>
 
 </project>
