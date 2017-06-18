@@ -32,4 +32,9 @@
         <servlet-name>hello_world_servlet</servlet-name>
     </filter-mapping>
 
+
+    <listener>
+        <listener-class>com.nk.webapp.ContextEventListener</listener-class>
+    </listener>
+
 </web-app>
