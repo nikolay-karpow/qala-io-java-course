@@ -23,14 +23,14 @@
         <filter-class>com.nk.webapp.SecondFilter</filter-class>
     </filter>
 
-    <filter-mapping>
-        <filter-name>first_filter</filter-name>
-        <servlet-name>hello_world_servlet</servlet-name>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>second_filter</filter-name>
-        <servlet-name>hello_world_servlet</servlet-name>
-    </filter-mapping>
+    <!--<filter-mapping>-->
+        <!--<filter-name>first_filter</filter-name>-->
+        <!--<servlet-name>hello_world_servlet</servlet-name>-->
+    <!--</filter-mapping>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>second_filter</filter-name>-->
+        <!--<servlet-name>hello_world_servlet</servlet-name>-->
+    <!--</filter-mapping>-->
 
 
     <listener>
