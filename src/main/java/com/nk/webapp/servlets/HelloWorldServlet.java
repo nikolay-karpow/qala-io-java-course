@@ -1,4 +1,4 @@
-package com.nk.webapp;
+package com.nk.webapp.servlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

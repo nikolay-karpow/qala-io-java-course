@@ -1,4 +1,4 @@
-package com.nk.webapp;
+package com.nk.webapp.listeners;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
