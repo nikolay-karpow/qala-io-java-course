@@ -4,37 +4,14 @@
 
 <web-app>
     <servlet>
-        <servlet-name>hello_world_servlet</servlet-name>
-        <servlet-class>com.nk.webapp.servlets.HelloWorldServlet</servlet-class>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>hello_world_servlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
-
-    <filter>
-        <filter-name>first_filter</filter-name>
-        <filter-class>com.nk.webapp.filters.FirstFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>second_filter</filter-name>
-        <filter-class>com.nk.webapp.filters.SecondFilter</filter-class>
-    </filter>
-
-    <!--<filter-mapping>-->
-        <!--<filter-name>first_filter</filter-name>-->
-        <!--<servlet-name>hello_world_servlet</servlet-name>-->
-    <!--</filter-mapping>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>second_filter</filter-name>-->
-        <!--<servlet-name>hello_world_servlet</servlet-name>-->
-    <!--</filter-mapping>-->
-
-
-    <listener>
-        <listener-class>com.nk.webapp.listeners.ContextEventListener</listener-class>
-    </listener>
 
 </web-app>

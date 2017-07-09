@@ -4,11 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="myBean" class="com.nk.webapp.MyBean" autowire="byName">
-    </bean>
 
-    <bean id="mySecondBean" class="com.nk.webapp.MySecondBean">
-        <constructor-arg value="My Property Value" />
-    </bean>
+    <bean class="com.nk.webapp.DogsController" />
 
 </beans>
