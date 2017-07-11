@@ -3,6 +3,7 @@ package com.nk.webapp;
 import java.util.Date;
 
 public class Dog {
+
     private int id;
     private String name;
     private Date birthday;
@@ -24,28 +25,40 @@ public class Dog {
         this.weight = weight;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 
     @Override
@@ -59,6 +72,10 @@ public class Dog {
         if (weight != dog.weight) return false;
         if (!name.equals(dog.name)) return false;
         return birthday != null ? birthday.equals(dog.birthday) : dog.birthday == null;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     @Override
