@@ -1,13 +1,24 @@
 package com.nk.webapp;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class Dog {
 
     private int id;
+
+    @Size(min = 1, max = 100)
     private String name;
+
+    @Past
     private Date birthday;
+
+    @Min(value = 1)
     private int height;
+
+    @Min(value = 1)
     private int weight;
 
     public Dog() {
