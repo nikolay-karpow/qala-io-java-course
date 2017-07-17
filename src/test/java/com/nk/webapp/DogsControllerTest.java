@@ -1,6 +1,9 @@
 package com.nk.webapp;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.builder.RequestSpecBuilder;
+import com.jayway.restassured.filter.log.LogDetail;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,33 +21,34 @@ public class DogsControllerTest {
     public static void setUp() {
         RestAssured.port = 8080;
         RestAssured.baseURI = "http://localhost:8080/sjc";
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .log(LogDetail.ALL)
+                .setContentType(ContentType.JSON)
+                .build();
     }
 
     @Test
     public void testCreateDog() throws Exception {
         Dog bobik = new Dog("Bobik", new Date(), 10, 20);
 
-        Response response = given().log().all()
-                .contentType("application/json;charset=UTF-8")
-                .body(bobik)
-                .post("/dog");
+        Response response = createDog(bobik);
 
         assertEquals(response.getStatusCode(), 201);
 
         String location = response.getHeader("Location");
 
-        Dog dog = given().get(location).as(Dog.class);
+        Dog dog = getDog(location);
         assertEquals(dog, bobik);
         assertNotEquals(dog.getId(), -1);
     }
 
     @Test
     public void testGetDogWithWrongId() throws Exception {
-        given().get("/dog/" + Integer.MAX_VALUE)
+        getDogResponse("/dog/" + Integer.MAX_VALUE)
                 .then()
                 .statusCode(404);
 
-        given().get("/dog/-1")
+        getDogResponse("/dog/-1")
                 .then()
                 .statusCode(404);
     }
@@ -54,14 +58,10 @@ public class DogsControllerTest {
         Dog bobik = new Dog("NewBobik", new Date(), 10, 20);
         Dog tuzik = new Dog("NewTuzik", new Date(), 100, 200);
 
-        given().contentType("application/json;charset=UTF-8")
-                .body(bobik)
-                .post("/dog");
-        given().contentType("application/json;charset=UTF-8")
-                .body(tuzik)
-                .post("/dog");
+       createDog(bobik);
+       createDog(tuzik);
 
-        List<Dog> dogs = Arrays.asList(given().get("/dog").as(Dog[].class));
+        List<Dog> dogs = Arrays.asList(getDogResponse("/dog").as(Dog[].class));
         assertTrue(dogs.contains(bobik));
         assertTrue(dogs.contains(tuzik));
     }
@@ -69,17 +69,14 @@ public class DogsControllerTest {
     @Test
     public void testDeleteDog() throws Exception {
         Dog bobik = new Dog("Bobik", new Date(), 10, 20);
-        Response response = given().log().all()
-                .contentType("application/json;charset=UTF-8")
-                .body(bobik)
-                .post("/dog");
+        Response response = createDog(bobik);
 
         String location = response.getHeader("Location");
         Response deleteResponse = given().delete(location);
 
         assertEquals(deleteResponse.statusCode(), 200);
         assertEquals(deleteResponse.getBody().asString(), "Dog is deleted");
-        assertEquals(given().get(location).statusCode(), 404);
+        assertEquals(getDogResponse(location).statusCode(), 404);
     }
 
     @Test
@@ -95,24 +92,58 @@ public class DogsControllerTest {
 
     @Test
     public void testReplaceDog() throws Exception {
-        Response response = given().log().all()
-                .contentType("application/json;charset=UTF-8")
-                .body(new Dog("Bobik", new Date(), 10, 20))
-                .post("/dog");
+        Response response = createDog(new Dog("Bobik", new Date(), 10, 20));
 
         String location = response.getHeader("Location");
 
-        Dog dog = given().get(location).as(Dog.class);
+        Dog dog = getDog(location);
         dog.setName("Tuzik");
         dog.setHeight(500);
 
         given().body(dog)
-                .contentType("application/json;charset=UTF-8")
                 .put("/dog")
                 .then()
                 .statusCode(200);
 
-        Dog retrievedAfterPut = given().get(location).as(Dog.class);
+        Dog retrievedAfterPut = getDog(location);
         assertEquals(retrievedAfterPut, dog);
+    }
+
+    @Test
+    public void serviceReturnsBadRequest_whenInvalidDogIsCreated() throws Exception {
+        Dog dog = new Dog("", new Date(), 10, 20);
+        Response response = createDog(dog);
+
+        assertEquals(response.getStatusCode(), 400);
+    }
+
+    @Test
+    public void serviceReturnsBadRequest_whenDogReplacementIsInvalid() throws Exception {
+        Response response = createDog(new Dog("Bobik", new Date(), 10, 20));
+
+        String location = response.getHeader("Location");
+
+        Dog dog = getDog(location);
+        dog.setName("Tuzik");
+        dog.setHeight(-1);
+
+        given().body(dog)
+                .put("/dog")
+                .then()
+                .statusCode(400);
+    }
+
+    private Response createDog(Dog dog) {
+        return given().log().all()
+                    .body(dog)
+                    .post("/dog");
+    }
+
+    private Dog getDog(String uri) {
+        return getDogResponse(uri).as(Dog.class);
+    }
+
+    private Response getDogResponse(String uri) {
+        return given().get(uri);
     }
 }
