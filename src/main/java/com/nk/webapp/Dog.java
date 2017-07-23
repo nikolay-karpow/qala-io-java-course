@@ -1,6 +1,7 @@
 package com.nk.webapp;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -9,6 +10,7 @@ public class Dog {
 
     private int id;
 
+    @NotNull
     @Size(min = 1, max = 100)
     private String name;
 
@@ -91,7 +93,7 @@ public class Dog {
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
         result = 31 * result + height;
         result = 31 * result + weight;

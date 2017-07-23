@@ -18,11 +18,13 @@ import org.testng.annotations.Test;
 import java.util.Date;
 import java.util.List;
 
+import static com.nk.webapp.DogUtil.randomDog;
+import static io.qala.datagen.RandomShortApi.positiveInteger;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @WebAppConfiguration
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/dispatcher-servlet.xml")
@@ -44,17 +46,17 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testCreateDog() throws Exception {
-        Dog bobik = new Dog("Bobik", new Date(), 10, 20);
+        Dog newDog = randomDog();
 
-        MockHttpServletResponse response = createDog(bobik);
+        MockHttpServletResponse response = createDog(newDog);
 
         Assert.assertEquals(response.getStatus(), 201);
 
         String location = response.getHeader("Location");
 
         Dog dog = getDog(location);
-        Assert.assertEquals(dog, bobik);
-        assertNotEquals(dog.getId(), -1);
+        newDog.setId(dog.getId());
+        assertReflectionEquals(dog, newDog);
     }
 
     @Test
@@ -69,23 +71,23 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testListDogs() throws Exception {
-        Dog bobik = new Dog("NewBobik", new Date(), 10, 20);
-        Dog tuzik = new Dog("NewTuzik", new Date(), 100, 200);
+        Dog firstDog = randomDog();
+        Dog secondDog = randomDog();
 
-        createDog(bobik);
-        createDog(tuzik);
+        createDog(firstDog);
+        createDog(secondDog);
 
         List<Dog> dogs = OBJECT_MAPPER.readerFor(new TypeReference<List<Dog>>() {
         })
                 .readValue(getDogResponse("/dog").getContentAsByteArray());
-        assertTrue(dogs.contains(bobik));
-        assertTrue(dogs.contains(tuzik));
+        assertTrue(dogs.contains(firstDog));
+        assertTrue(dogs.contains(secondDog));
     }
 
     @Test
     public void testDeleteDog() throws Exception {
-        Dog bobik = new Dog("Bobik", new Date(), 10, 20);
-        MockHttpServletResponse response = createDog(bobik);
+        Dog dog = randomDog();
+        MockHttpServletResponse response = createDog(dog);
 
         String location = response.getHeader("Location");
         MockHttpServletResponse deleteResponse = mvc.perform(delete(location)).andReturn().getResponse();
@@ -111,8 +113,10 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
         String location = response.getHeader("Location");
 
         Dog dog = getDog(location);
-        dog.setName("Tuzik");
-        dog.setHeight(500);
+        dog.setName(DogUtil.randomValidName());
+        dog.setBirthday(DogUtil.randomValidBirthday());
+        dog.setHeight(positiveInteger());
+        dog.setWeight(positiveInteger());
 
         mvc.perform(put("/dog")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -122,7 +126,6 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
         Dog retrievedAfterPut = getDog(location);
         Assert.assertEquals(retrievedAfterPut, dog);
     }
-
 
     @Test
     public void serviceReturnsBadRequest_whenInvalidDogIsCreated() throws Exception {
@@ -134,12 +137,12 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void serviceReturnsBadRequest_whenDogReplacementIsInvalid() throws Exception {
-        MockHttpServletResponse response = createDog(new Dog("Bobik", new Date(), 10, 20));
+        MockHttpServletResponse response = createDog(randomDog());
 
         String location = response.getHeader("Location");
 
         Dog dog = getDog(location);
-        dog.setName("Tuzik");
+        dog.setName(DogUtil.randomValidName());
         dog.setHeight(-1);
 
         response = mvc.perform(put("/dog")
