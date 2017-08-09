@@ -8,7 +8,12 @@
 
     <mvc:annotation-driven validator="validator"/>
 
-    <bean class="com.nk.webapp.DogsController" />
+    <bean id="dogDao" class="com.nk.dao.InMemoryDogDao"/>
+
+    <bean class="com.nk.webapp.DogsController" >
+        <constructor-arg name="dogDao" ref="dogDao"/>
+    </bean>
+
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
 </beans>
