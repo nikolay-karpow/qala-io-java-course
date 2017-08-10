@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/")
@@ -19,7 +20,7 @@ public class DogsController {
     }
 
     @PostMapping(value = "/dog", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity createDog(@RequestBody @Valid Dog dog) {
+    public ResponseEntity createDog(@RequestBody @Valid Dog dog) throws SQLException {
         return ResponseEntity
                 .created(URI.create("/dog/" + dogDao.create(dog).getId()))
                 .build();
@@ -32,7 +33,7 @@ public class DogsController {
     }
 
     @GetMapping(value = "/dog/{id}")
-    public ResponseEntity getDog(@PathVariable int id) {
+    public ResponseEntity getDog(@PathVariable int id) throws SQLException {
         Dog dog = dogDao.findById(id);
         if (dog != null) {
             return ResponseEntity.ok(dog);
