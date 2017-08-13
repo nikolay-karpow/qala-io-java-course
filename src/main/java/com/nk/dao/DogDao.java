@@ -11,9 +11,9 @@ public interface DogDao {
 
     Dog findById(int id) throws SQLException;
 
-    Collection<Dog> listAll();
+    Collection<Dog> listAll() throws SQLException;
 
-    Dog update(Dog dog);
+    Dog update(Dog dog) throws SQLException;
 
-    boolean delete(int id);
+    boolean delete(int id) throws SQLException;
 }

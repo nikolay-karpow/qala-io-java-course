@@ -27,7 +27,7 @@ public class DogsController {
     }
 
     @PutMapping(value = "/dog")
-    public ResponseEntity replaceDog(@RequestBody @Valid Dog dog) {
+    public ResponseEntity replaceDog(@RequestBody @Valid Dog dog) throws SQLException {
         dogDao.update(dog);
         return ResponseEntity.ok().build();
     }
@@ -42,12 +42,12 @@ public class DogsController {
     }
 
     @GetMapping(value = "/dog")
-    public ResponseEntity getListOfDogs() {
+    public ResponseEntity getListOfDogs() throws SQLException {
         return ResponseEntity.ok(dogDao.listAll());
     }
 
     @DeleteMapping(value = "/dog/{id}")
-    ResponseEntity deleteDog(@PathVariable int id) {
+    ResponseEntity deleteDog(@PathVariable int id) throws SQLException {
         if (dogDao.delete(id)){
             return ResponseEntity.ok("Dog is deleted");
         }
