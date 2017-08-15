@@ -22,9 +22,9 @@ public class DogValidationTest {
 
     @Test
     public void name_mustBeNonEmptyUpTo100Symbols() throws Exception {
-        String expectedMessage = "size must be between 1 and 100";
+        String expectedMessage = "Name must be non-null, non-empty and not longer, than 100 characters";
         checkDogWithOneInvalidField(dogWithName(""), expectedMessage);
-        checkDogWithOneInvalidField(dogWithName(null), "may not be null");
+        checkDogWithOneInvalidField(dogWithName(null), expectedMessage);
         checkDogWithOneInvalidField(dogWithName(alphanumeric(101, 1000)), expectedMessage);
         checkValid(dogWithName(alphanumeric(1, 100)));
     }
