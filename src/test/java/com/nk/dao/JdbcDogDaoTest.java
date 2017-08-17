@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import static com.nk.webapp.DogUtil.randomDog;
+import static io.qala.datagen.RandomShortApi.alphanumeric;
 import static io.qala.datagen.RandomShortApi.positiveInteger;
 import static org.testng.Assert.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
@@ -109,4 +110,40 @@ public class JdbcDogDaoTest {
 
         assertFalse(deleteResult);
     }
+
+    @Test
+    public void dogWithNameOfMaximumLengthCanBeSaved() throws Exception {
+        Dog dog = randomDog();
+        dog.setName(alphanumeric(100));
+
+        Dog createdDog = dogDao.create(dog);
+
+        dog.setId(createdDog.getId());
+        assertReflectionEquals(dog, createdDog);
+    }
+
+    @Test
+    public void dogCreationIsNotVolnurableForSqlInjectionInDogName() throws Exception {
+        Dog dog = randomDog();
+        dog.setName("\"' blah");
+
+        Dog createdDog = dogDao.create(dog);
+
+        assertEquals(createdDog.getName(), dog.getName());
+    }
+
+
+    @Test
+    public void updateIsNotVolnurableForSqlInjectionInDogName() throws Exception {
+        Dog createdDog = dogDao.create(randomDog());
+        Dog changedDog = randomDog();
+        changedDog.setId(createdDog.getId());
+
+        String name = "\"' blah";
+        changedDog.setName(name);
+        Dog updatedDog = dogDao.update(changedDog);
+
+        assertReflectionEquals(updatedDog, changedDog);
+    }
+
 }
