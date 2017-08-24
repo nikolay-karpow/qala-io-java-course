@@ -20,7 +20,7 @@ public class JdbcDogDao implements DogDao {
 
     private final DataSource dataSource;
 
-    public JdbcDogDao(DataSource dataSource) throws SQLException {
+    public JdbcDogDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

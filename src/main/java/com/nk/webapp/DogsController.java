@@ -1,6 +1,7 @@
 package com.nk.webapp;
 
 import com.nk.dao.DogDao;
+import com.nk.service.DogService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ import java.sql.SQLException;
 @RequestMapping("/")
 public class DogsController {
 
-    private final DogDao dogDao;
+    private final DogService dogDao;
 
-    public DogsController(DogDao dogDao) {
+    public DogsController(DogService dogDao) {
         this.dogDao = dogDao;
     }
 
