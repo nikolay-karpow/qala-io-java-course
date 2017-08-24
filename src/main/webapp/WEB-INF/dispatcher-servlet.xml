@@ -16,12 +16,16 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="connectionHolder" class="com.nk.dao.JdbcConnectionHolder" />
+
     <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
-        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="connectionHolder"/>
     </bean>
 
     <bean id="dogService" class="com.nk.service.DogService">
         <constructor-arg ref="dogDao"/>
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="connectionHolder" />
     </bean>
 
     <bean class="com.nk.webapp.DogsController">
