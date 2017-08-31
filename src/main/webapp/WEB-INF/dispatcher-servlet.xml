@@ -22,14 +22,18 @@
         <constructor-arg ref="connectionHolder"/>
     </bean>
 
-    <bean id="dogService" class="com.nk.service.DogService">
+    <bean id="dogService" class="com.nk.service.DogServiceImpl">
         <constructor-arg ref="dogDao"/>
+    </bean>
+
+    <bean id="transactionalDogService" class="com.nk.service.TransactionalDogService">
+        <constructor-arg ref="dogService" />
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="connectionHolder" />
     </bean>
 
     <bean class="com.nk.webapp.DogsController">
-        <constructor-arg ref="dogService"/>
+        <constructor-arg ref="transactionalDogService"/>
     </bean>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
