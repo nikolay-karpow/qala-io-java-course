@@ -26,7 +26,7 @@
         <constructor-arg ref="dogDao"/>
     </bean>
 
-    <bean id="transactionalDogService" class="com.nk.service.TransactionalDogService">
+    <bean id="transactionalDogService" class="com.nk.service.TransactionalProxy">
         <constructor-arg ref="dogService" />
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="connectionHolder" />
