@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -16,7 +17,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="connectionHolder" class="com.nk.dao.JdbcConnectionHolder" />
+    <bean id="connectionHolder" class="com.nk.dao.JdbcConnectionHolder"/>
 
     <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
         <constructor-arg ref="connectionHolder"/>
@@ -26,16 +27,27 @@
         <constructor-arg ref="dogDao"/>
     </bean>
 
-    <bean id="transactionalDogService" class="com.nk.service.TransactionalProxy">
-        <constructor-arg ref="dogService" />
+    <bean id="dynamicProxyFactory" class="com.nk.service.DynamicProxyFactory"/>
+
+    <bean id="transactionalInvocationHandler"
+          class="com.nk.service.TransactionalInvocationHandler">
+        <constructor-arg ref="dogService"/>
         <constructor-arg ref="dataSource"/>
-        <constructor-arg ref="connectionHolder" />
+        <constructor-arg ref="connectionHolder"/>
+    </bean>
+
+    <bean id="transactionalDogService" class="java.lang.reflect.Proxy"
+          factory-bean="dynamicProxyFactory"
+          factory-method="create">
+        <constructor-arg ref="dogService"/>
+        <constructor-arg ref="transactionalInvocationHandler"/>
     </bean>
 
     <bean class="com.nk.webapp.DogsController">
         <constructor-arg ref="transactionalDogService"/>
     </bean>
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    <bean id="validator"
+          class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
 </beans>
