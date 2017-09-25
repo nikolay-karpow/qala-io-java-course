@@ -1,5 +1,6 @@
 package com.nk.webapp;
 
+import com.nk.logging.Logged;
 import com.nk.validation.Name;
 
 import javax.validation.constraints.Min;
