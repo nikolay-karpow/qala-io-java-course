@@ -23,7 +23,7 @@
         <constructor-arg ref="connectionHolder"/>
     </bean>
 
-    <bean id="dogService" class="com.nk.service.DogServiceImpl">
+    <bean id="dogService" class="com.nk.service.DogService">
         <constructor-arg ref="dogDao"/>
     </bean>
 

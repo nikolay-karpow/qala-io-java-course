@@ -1,19 +1,42 @@
 package com.nk.service;
 
+import com.nk.dao.DogDao;
 import com.nk.webapp.Dog;
 
 import java.sql.SQLException;
 import java.util.Collection;
 
-public interface DogService {
+public class DogService {
 
-    Dog create(Dog dog) throws SQLException;
+    private final DogDao dogDao;
 
-    Dog findById(int id) throws SQLException;
+    // for the sake of CGLib
+    protected DogService() {
+        this(null);
+    }
 
-    Collection<Dog> listAll() throws SQLException;
+    public DogService(DogDao dogDao) {
+        this.dogDao = dogDao;
+    }
 
-    Dog update(Dog dog) throws SQLException;
+    public Dog create(Dog dog) throws SQLException {
+        return dogDao.create(dog);
+    }
 
-    boolean delete(int id) throws SQLException;
+    public Dog findById(int id) throws SQLException {
+        return dogDao.findById(id);
+    }
+
+    public Collection<Dog> listAll() throws SQLException {
+        return dogDao.listAll();
+    }
+
+    public Dog update(Dog dog) throws SQLException {
+        return dogDao.update(dog);
+    }
+
+    public boolean delete(int id) throws SQLException {
+        return dogDao.delete(id);
+    }
+
 }

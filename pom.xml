@@ -68,6 +68,12 @@
             <artifactId>flyway-core</artifactId>
             <version>4.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.testng</groupId>
@@ -105,7 +111,6 @@
             <version>2.2.1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
