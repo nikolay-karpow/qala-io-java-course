@@ -14,13 +14,13 @@ public class Dog {
     @Name
     private String name;
 
-    @Past
+    @Past(message = "must be in the past")
     private Date birthday;
 
-    @Min(value = 1)
+    @Min(value = 1, message = "must be greater than or equal to 1")
     private int height;
 
-    @Min(value = 1)
+    @Min(value = 1, message = "must be greater than or equal to 1")
     private int weight;
 
     public Dog() {

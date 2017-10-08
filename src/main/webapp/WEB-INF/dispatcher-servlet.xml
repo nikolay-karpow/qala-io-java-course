@@ -7,8 +7,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   					   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
     <mvc:annotation-driven validator="validator"/>
 
@@ -28,29 +30,20 @@
         <constructor-arg ref="dogDao"/>
     </bean>
 
-    <bean id="dynamicProxyFactory" class="com.nk.service.DynamicProxyFactory"/>
-
-    <bean id="transactionalInvocationHandler"
-          class="com.nk.service.TransactionalInvocationHandler">
-        <constructor-arg ref="dogService"/>
-        <constructor-arg ref="dataSource"/>
-        <constructor-arg ref="connectionHolder"/>
+    <bean class="com.nk.service.DependenciesHolderForTransactionalAspect">
+        <property name="connectionHolder" ref="connectionHolder"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="transactionalDogService" class="java.lang.reflect.Proxy"
-          factory-bean="dynamicProxyFactory"
-          factory-method="create">
-        <constructor-arg ref="dogService"/>
-        <constructor-arg ref="transactionalInvocationHandler"/>
-    </bean>
+    <bean id="transactionalAspect" class="com.nk.service.TransactionalAspect"/>
 
     <bean class="com.nk.webapp.DogsController">
-        <constructor-arg ref="transactionalDogService"/>
+        <constructor-arg ref="dogService"/>
     </bean>
 
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
-    <bean id="loggingAspect" class="com.nk.logging.LoggingAspect" />
+    <bean id="loggingAspect" class="com.nk.logging.LoggingAspect"/>
 
 </beans>
