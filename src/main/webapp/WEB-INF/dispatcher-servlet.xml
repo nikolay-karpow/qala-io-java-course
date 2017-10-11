@@ -30,12 +30,10 @@
         <constructor-arg ref="dogDao"/>
     </bean>
 
-    <bean class="com.nk.service.DependenciesHolderForTransactionalAspect">
-        <property name="connectionHolder" ref="connectionHolder"/>
-        <property name="dataSource" ref="dataSource"/>
+    <bean id="transactionalAspect" class="com.nk.service.TransactionalAspect" factory-method="aspectOf">
+        <property name="dataSource" ref="dataSource" />
+        <property name="connectionHolder" ref="connectionHolder" />
     </bean>
-
-    <bean id="transactionalAspect" class="com.nk.service.TransactionalAspect"/>
 
     <bean class="com.nk.webapp.DogsController">
         <constructor-arg ref="dogService"/>
@@ -43,7 +41,5 @@
 
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
-
-    <bean id="loggingAspect" class="com.nk.logging.LoggingAspect"/>
 
 </beans>
