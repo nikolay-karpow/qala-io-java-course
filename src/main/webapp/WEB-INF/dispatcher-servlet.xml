@@ -4,10 +4,12 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   					   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
                            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
@@ -20,24 +22,32 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="connectionHolder" class="com.nk.dao.JdbcConnectionHolder"/>
-
     <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
-        <constructor-arg ref="connectionHolder"/>
+        <constructor-arg ref="dataSource"/>
     </bean>
 
     <bean id="dogService" class="com.nk.service.DogServiceImpl">
         <constructor-arg ref="dogDao"/>
     </bean>
 
-    <bean id="transactionalAspect" class="com.nk.service.TransactionalAspect" factory-method="aspectOf">
-        <property name="dataSource" ref="dataSource" />
-        <property name="connectionHolder" ref="connectionHolder" />
-    </bean>
-
     <bean class="com.nk.webapp.DogsController">
         <constructor-arg ref="dogService"/>
     </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="dogServiceMethods" expression="execution(* com.nk.service.DogService.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="dogServiceMethods"/>
+    </aop:config>
 
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>

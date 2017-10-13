@@ -29,9 +29,7 @@ public class JdbcDogDaoTest {
                         "  height INT,\n" +
                         "  weight INT\n" +
                         ")");
-        JdbcConnectionHolder connectionHolder = new JdbcConnectionHolder();
-        connectionHolder.set(dataSource.getConnection());
-        dogDao = new JdbcDogDao(connectionHolder);
+        dogDao = new JdbcDogDao(dataSource);
     }
 
     @Test

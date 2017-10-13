@@ -2,12 +2,14 @@ package com.nk.dao;
 
 import com.nk.webapp.Dog;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static org.springframework.jdbc.datasource.DataSourceUtils.getConnection;
 
 public class JdbcDogDao implements DogDao {
 
@@ -17,15 +19,15 @@ public class JdbcDogDao implements DogDao {
     private static final String UPDATE = "UPDATE Dog SET name=?, birthday=?, height=?, weight=? WHERE id=?";
     private static final String DELETE = "DELETE FROM Dog WHERE id=?";
 
-    private final JdbcConnectionHolder connectionHolder;
+    private final DataSource dataSource;
 
-    public JdbcDogDao(JdbcConnectionHolder connectionHolder) {
-        this.connectionHolder = connectionHolder;
+    public JdbcDogDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public Dog create(Dog dog) throws SQLException {
-        Connection connection = connectionHolder.get();
+        Connection connection = getConnection(dataSource);
         try (PreparedStatement statement = connection.prepareStatement(CREATE_DOG, RETURN_GENERATED_KEYS)) {
             setSaveStatementParameters(dog, statement);
 
@@ -43,7 +45,7 @@ public class JdbcDogDao implements DogDao {
 
     @Override
     public Dog findById(int id) throws SQLException {
-        Connection connection = connectionHolder.get();
+        Connection connection = getConnection(dataSource);
         try (PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setInt(1, id);
 
@@ -59,7 +61,7 @@ public class JdbcDogDao implements DogDao {
 
     @Override
     public Collection<Dog> listAll() throws SQLException {
-        Connection connection = connectionHolder.get();
+        Connection connection = getConnection(dataSource);
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(LIST_ALL)) {
             List<Dog> result = new ArrayList<>();
@@ -72,7 +74,7 @@ public class JdbcDogDao implements DogDao {
 
     @Override
     public Dog update(Dog dog) throws SQLException {
-        Connection connection = connectionHolder.get();
+        Connection connection = getConnection(dataSource);
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             setSaveStatementParameters(dog, statement);
             statement.setInt(5, dog.getId());
@@ -88,7 +90,7 @@ public class JdbcDogDao implements DogDao {
 
     @Override
     public boolean delete(int id) throws SQLException {
-        Connection connection = connectionHolder.get();
+        Connection connection = getConnection(dataSource);
         try (PreparedStatement statement = connection.prepareStatement(DELETE)) {
             statement.setInt(1, id);
             return statement.executeUpdate() == 1;
@@ -112,3 +114,4 @@ public class JdbcDogDao implements DogDao {
         statement.setInt(4, dog.getWeight());
     }
 }
+ 
