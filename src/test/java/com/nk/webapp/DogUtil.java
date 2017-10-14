@@ -11,7 +11,8 @@ import static java.lang.System.currentTimeMillis;
 
 public class DogUtil {
     public static Dog randomDog() {
-        return new Dog(alphanumeric(1, 100), RandomValue.upTo(currentTimeMillis()).date(), positiveInteger(), positiveInteger());
+        return new Dog(alphanumeric(1, 100),
+                RandomValue.upTo(currentTimeMillis()).date(), positiveInteger(), positiveInteger());
     }
 
 

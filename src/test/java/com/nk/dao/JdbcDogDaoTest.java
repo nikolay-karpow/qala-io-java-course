@@ -6,7 +6,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import static com.nk.webapp.DogUtil.randomDog;
 import static io.qala.datagen.RandomShortApi.alphanumeric;
