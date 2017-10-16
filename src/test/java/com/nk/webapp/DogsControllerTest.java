@@ -40,8 +40,8 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
     @BeforeMethod
     public void setUp() throws Exception {
         mvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .build();
+            .webAppContextSetup(context)
+            .build();
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
 
         List<Dog> dogs = OBJECT_MAPPER.readerFor(new TypeReference<List<Dog>>() {
         })
-                .readValue(getDogResponse("/dog").getContentAsByteArray());
+            .readValue(getDogResponse("/dog").getContentAsByteArray());
         assertTrue(dogs.contains(firstDog));
         assertTrue(dogs.contains(secondDog));
     }
@@ -100,15 +100,16 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
     @Test
     public void testDeleteDogWrongId() throws Exception {
         mvc.perform(delete("/dog/" + Integer.MAX_VALUE))
-                .andExpect(status().is(404));
+            .andExpect(status().is(404));
 
         mvc.perform(delete("/dog/-1"))
-                .andExpect(status().is(404));
+            .andExpect(status().is(404));
     }
 
     @Test
     public void testReplaceDog() throws Exception {
-        MockHttpServletResponse response = createDog(new Dog("Bobik", new Date(), 10, 20));
+        Dog bobik = randomDog();
+        MockHttpServletResponse response = createDog(bobik);
 
         String location = response.getHeader("Location");
 
@@ -119,9 +120,9 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
         dog.setWeight(positiveInteger());
 
         mvc.perform(put("/dog")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(OBJECT_MAPPER.writeValueAsString(dog)))
-                .andExpect(status().is(200));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(OBJECT_MAPPER.writeValueAsString(dog)))
+            .andExpect(status().is(200));
 
         Dog retrievedAfterPut = getDog(location);
         Assert.assertEquals(retrievedAfterPut, dog);
@@ -146,30 +147,30 @@ public class DogsControllerTest extends AbstractTestNGSpringContextTests {
         dog.setHeight(-1);
 
         response = mvc.perform(put("/dog")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(OBJECT_MAPPER.writeValueAsBytes(dog)))
-                .andReturn().getResponse();
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(OBJECT_MAPPER.writeValueAsBytes(dog)))
+            .andReturn().getResponse();
 
         assertEquals(response.getStatus(), 400);
     }
 
     private MockHttpServletResponse createDog(Dog dog) throws Exception {
         return mvc.perform(post("/dog")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(OBJECT_MAPPER.writeValueAsBytes(dog)))
-                .andReturn().getResponse();
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(OBJECT_MAPPER.writeValueAsBytes(dog)))
+            .andReturn().getResponse();
     }
 
     private Dog getDog(String uri) throws Exception {
         byte[] body = getDogResponse(uri)
-                .getContentAsByteArray();
+            .getContentAsByteArray();
         return OBJECT_MAPPER.readerFor(Dog.class).readValue(body);
     }
 
     private MockHttpServletResponse getDogResponse(String uri) throws Exception {
         return mvc.perform(get(uri))
-                .andReturn()
-                .getResponse();
+            .andReturn()
+            .getResponse();
     }
 
 }

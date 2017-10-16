@@ -2,13 +2,17 @@ package com.nk.dao;
 
 import com.nk.webapp.Dog;
 import org.h2.jdbcx.JdbcDataSource;
+import org.springframework.jdbc.datasource.ConnectionHolder;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 import static com.nk.webapp.DogUtil.randomDog;
 import static io.qala.datagen.RandomShortApi.alphanumeric;
@@ -18,20 +22,37 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 public class JdbcDogDaoTest {
     private static DogDao dogDao;
+    private static JdbcDataSource dataSource;
 
     @BeforeClass
     public static void beforeClass() throws SQLException {
-        JdbcDataSource dataSource = new JdbcDataSource();
+        dataSource = new JdbcDataSource();
         dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         dataSource.getConnection().createStatement()
-                .execute("CREATE TABLE Dog (\n" +
-                        "  id   INT PRIMARY KEY AUTO_INCREMENT,\n" +
-                        "  name VARCHAR(100),\n" +
-                        "  birthday TIMESTAMP,\n" +
-                        "  height INT,\n" +
-                        "  weight INT\n" +
-                        ")");
+            .execute("CREATE TABLE Dog (\n" +
+                "  id   INT PRIMARY KEY AUTO_INCREMENT,\n" +
+                "  name VARCHAR(100),\n" +
+                "  birthday TIMESTAMP,\n" +
+                "  height INT,\n" +
+                "  weight INT\n" +
+                ")");
         dogDao = new JdbcDogDao(dataSource);
+    }
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        connection.setAutoCommit(false);
+        ConnectionHolder connectionHolder = new ConnectionHolder(connection);
+        TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
+    }
+
+    @AfterMethod
+    public void tearDown() throws Exception {
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        connection.rollback();
+        connection.setAutoCommit(true);
+        TransactionSynchronizationManager.unbindResource(dataSource);
     }
 
     @Test
