@@ -21,6 +21,14 @@
     <jdbc:embedded-database id="unpooledDataSource" type="H2"/>
     <bean id="dataSource" class="com.mchange.v2.c3p0.DataSources" factory-method="pooledDataSource" >
         <constructor-arg ref="unpooledDataSource" />
+        <constructor-arg>
+            <props>
+                <prop key="minPoolSize">10</prop>
+                <prop key="maxPoolSize">20</prop>
+                <prop key="maxStatements">80</prop> <!--4 statements per connection-->
+                <prop key="maxStatementsPerConnection">4</prop>
+            </props>
+        </constructor-arg>
     </bean>
 
     <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
