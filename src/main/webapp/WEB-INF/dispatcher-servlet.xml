@@ -27,6 +27,8 @@
                 <prop key="maxPoolSize">20</prop>
                 <prop key="maxStatements">80</prop> <!--4 statements per connection-->
                 <prop key="maxStatementsPerConnection">4</prop>
+                <prop key="unreturnedConnectionTimeout">10</prop>
+                <prop key="debugUnreturnedConnectionStackTraces">true</prop>
             </props>
         </constructor-arg>
     </bean>
