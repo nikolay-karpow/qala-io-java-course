@@ -3,13 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   					   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
@@ -17,29 +17,16 @@
 
     <mvc:annotation-driven validator="validator"/>
 
-    <!--<jdbc:embedded-database id="unpooledDataSource" type="H2"/>-->
-    <!--<bean id="dataSource" class="com.nk.dao.JndiDataSourceFactory" factory-method="dataSource">-->
-        <!--<constructor-arg name="jndiPath" value="java:/comp/env/db/DataSource"/>-->
-    <!--</bean>-->
-
-    <jee:jndi-lookup id="dataSource" jndi-name="db/DataSource" expected-type="javax.sql.DataSource" />
-
-    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.DataSources" factory-method="pooledDataSource" >-->
-        <!--<constructor-arg ref="unpooledDataSource" />-->
-        <!--<constructor-arg>-->
-            <!--<props>-->
-                <!--<prop key="minPoolSize">10</prop>-->
-                <!--<prop key="maxPoolSize">20</prop>-->
-                <!--<prop key="maxStatements">80</prop> &lt;!&ndash;4 statements per connection&ndash;&gt;-->
-                <!--<prop key="maxStatementsPerConnection">4</prop>-->
-                <!--<prop key="unreturnedConnectionTimeout">10</prop>-->
-                <!--<prop key="debugUnreturnedConnectionStackTraces">true</prop>-->
-            <!--</props>-->
-        <!--</constructor-arg>-->
-    <!--</bean>-->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"/>
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="maxActive" value="20"/>
+        <property name="maxIdle" value="10" />
+    </bean>
 
     <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
         <property name="dataSource" ref="dataSource"/>
+        <property name="baselineOnMigrate" value="true"/>
     </bean>
 
     <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
