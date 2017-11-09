@@ -29,22 +29,29 @@
         <property name="baselineOnMigrate" value="true"/>
     </bean>
 
-    <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
-        <constructor-arg ref="dataSource"/>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingLocations" value="classpath:hibernate/*.hbm.xml"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto:validate}</prop>
+            </props>
+        </property>
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="dogDao" class="com.nk.dao.HibernateDogDao">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
     <bean id="dogService" class="com.nk.service.DogServiceImpl">
         <constructor-arg ref="dogDao"/>
     </bean>
-
     <bean class="com.nk.webapp.DogsController">
         <constructor-arg ref="dogService"/>
     </bean>
-
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
