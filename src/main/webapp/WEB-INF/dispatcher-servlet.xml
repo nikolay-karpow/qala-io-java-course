@@ -21,7 +21,7 @@
         <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"/>
         <property name="driverClassName" value="org.h2.Driver"/>
         <property name="maxActive" value="20"/>
-        <property name="maxIdle" value="10" />
+        <property name="maxIdle" value="10"/>
     </bean>
 
     <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
@@ -29,23 +29,6 @@
         <property name="baselineOnMigrate" value="true"/>
     </bean>
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="mappingLocations" value="classpath:hibernate/*.hbm.xml"/>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto:validate}</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <bean id="dogDao" class="com.nk.dao.HibernateDogDao">
-        <constructor-arg ref="sessionFactory"/>
-    </bean>
     <bean id="dogService" class="com.nk.service.DogServiceImpl">
         <constructor-arg ref="dogDao"/>
     </bean>
@@ -54,5 +37,34 @@
     </bean>
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+
+    <beans profile="hibernate,default">
+        <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+            <property name="sessionFactory" ref="sessionFactory"/>
+        </bean>
+
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="mappingLocations" value="classpath:hibernate/*.hbm.xml"/>
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto:validate}</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean id="dogDao" class="com.nk.dao.HibernateDogDao">
+            <constructor-arg ref="sessionFactory"/>
+        </bean>
+    </beans>
+    <beans profile="jdbc">
+        <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource"/>
+        </bean>
+        <bean id="dogDao" class="com.nk.dao.JdbcDogDao">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+    </beans>
 
 </beans>

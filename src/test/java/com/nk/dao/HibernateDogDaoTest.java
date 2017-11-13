@@ -3,8 +3,10 @@ package com.nk.dao;
 import com.nk.webapp.Dog;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
@@ -16,6 +18,8 @@ import static org.testng.Assert.*;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/dispatcher-servlet.xml")
+@ActiveProfiles("hibernate")
+@Transactional
 public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContextTests {
     @Autowired
     private SessionFactory sessionFactory;

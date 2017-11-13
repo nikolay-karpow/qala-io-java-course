@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,7 +29,7 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 
 @WebAppConfiguration
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/dispatcher-servlet.xml")
-public class DogsControllerTest extends AbstractTestNGSpringContextTests {
+public class DogsControllerTest extends AbstractTransactionalTestNGSpringContextTests {
 
     @Autowired
     private WebApplicationContext context;
