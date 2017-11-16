@@ -75,14 +75,21 @@ public class DogsControllerTest extends AbstractTransactionalTestNGSpringContext
         Dog firstDog = randomDog();
         Dog secondDog = randomDog();
 
-        createDog(firstDog);
-        createDog(secondDog);
+        MockHttpServletResponse firstResponse = createDog(firstDog);
+        firstDog.setId(idFromLocation(firstResponse.getHeader("Location")));
+        MockHttpServletResponse secondResponse = createDog(secondDog);
+        secondDog.setId(idFromLocation(secondResponse.getHeader("Location")));
 
         List<Dog> dogs = OBJECT_MAPPER.readerFor(new TypeReference<List<Dog>>() {
         })
             .readValue(getDogResponse("/dog").getContentAsByteArray());
         assertTrue(dogs.contains(firstDog));
         assertTrue(dogs.contains(secondDog));
+    }
+
+    private int idFromLocation(String location) {
+        String[] parts = location.split("/");
+        return Integer.valueOf(parts[parts.length - 1]);
     }
 
     @Test

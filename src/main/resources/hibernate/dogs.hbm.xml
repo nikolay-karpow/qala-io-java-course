@@ -11,5 +11,18 @@
         <property name="birthday"/>
         <property name="height"/>
         <property name="weight"/>
+        <set name="paws" table="Paw" inverse="true" lazy="true" fetch="select">
+            <key><column name="dogId" not-null="true" /></key>
+            <one-to-many class="com.nk.webapp.Paw"/>
+        </set>
+    </class>
+    <class name="com.nk.webapp.Paw" table="Paw">
+        <id name="id">
+            <generator class="increment"/>
+        </id>
+        <property name="name"/>
+        <many-to-one name="dog" class="com.nk.webapp.Dog" fetch="select">
+            <column name="dogId" not-null="true"/>
+        </many-to-one>
     </class>
 </hibernate-mapping>

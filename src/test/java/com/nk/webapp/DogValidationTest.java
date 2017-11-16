@@ -31,7 +31,6 @@ public class DogValidationTest {
 
     @Test
     public void dateOfBirth_mustNotBeInTheFuture() throws Exception {
-        checkValid(dogWithDate(null));
         checkValid(dogWithDate(new Date(currentTimeMillis() - 1)));
         checkDogWithOneInvalidField(dogWithDate(new Date(currentTimeMillis() + 5000)), "must be in the past");
     }

@@ -1,6 +1,7 @@
 package com.nk.dao;
 
 import com.nk.webapp.Dog;
+import com.nk.webapp.Paw;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import static com.nk.webapp.DogUtil.randomDog;
 import static io.qala.datagen.RandomShortApi.alphanumeric;
@@ -155,6 +157,30 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         Dog updatedDog = dogDao.update(createdDog);
 
         assertReflectionEquals(updatedDog, createdDog);
+    }
+
+    @Test
+    public void addPaws() throws Exception {
+        Dog createdDog = dogDao.create(randomDog());
+        Paw frontRight = new Paw("Front right", createdDog);
+        Paw frontLeft = new Paw("Front left", createdDog);
+        Paw backLeft = new Paw("Back left", createdDog);
+        sessionFactory.getCurrentSession().save(frontRight);
+        sessionFactory.getCurrentSession().save(frontLeft);
+        sessionFactory.getCurrentSession().save(backLeft);
+
+        createdDog.setPaws(new HashSet<Paw>() {{
+            add(frontRight);
+            add(frontLeft);
+            add(backLeft);
+        }});
+        dogDao.update(createdDog);
+        flush();
+        clear();
+        Dog foundDog = dogDao.findById(createdDog.getId());
+        foundDog.getPaws().stream()
+            .map(Paw::getName)
+            .forEach(System.err::println);
     }
 
     private Dog updateFieldsToRandomValues(Dog dog) {

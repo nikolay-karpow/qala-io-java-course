@@ -5,6 +5,8 @@ import com.nk.validation.Name;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Dog {
 
@@ -21,6 +23,8 @@ public class Dog {
 
     @Min(value = 1, message = "must be greater than or equal to 1")
     private int weight;
+
+    private Set<Paw> paws = new HashSet<>();
 
     public Dog() {
     }
@@ -73,6 +77,19 @@ public class Dog {
         return weight;
     }
 
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public Set<Paw> getPaws() {
+        return paws;
+    }
+
+    public void setPaws(Set<Paw> paws) {
+        this.paws = paws;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,22 +97,11 @@ public class Dog {
 
         Dog dog = (Dog) o;
 
-        if (height != dog.height) return false;
-        if (weight != dog.weight) return false;
-        if (!name.equals(dog.name)) return false;
-        return birthday != null ? birthday.equals(dog.birthday) : dog.birthday == null;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
+        return getId() == dog.getId();
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
-        result = 31 * result + height;
-        result = 31 * result + weight;
-        return result;
+        return getId();
     }
 }
