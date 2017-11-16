@@ -22,7 +22,8 @@ public class HibernateDogDao implements DogDao {
 
     @Override
     public Dog findById(int id) {
-        return session().get(Dog.class, id);
+        return session().load(Dog.class, id);
+//        return (Dog) session().createQuery("from Dog d join fetch d.paws where d.id=" + id).getSingleResult();
     }
 
     @Override

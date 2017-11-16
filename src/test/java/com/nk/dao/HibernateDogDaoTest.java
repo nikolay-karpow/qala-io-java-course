@@ -30,20 +30,6 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     private DogDao dogDao;
 
     @Test
-    public void createDog_returnsDogWithNewId() throws Exception {
-        Dog dog = randomDog();
-        Dog createdDog = dogDao.create(dog);
-        flush();
-        clear();
-        assertTrue(createdDog.getId() >= 0);
-        dog.setId(createdDog.getId());
-
-        Dog foundDog = dogDao.findById(createdDog.getId());
-        assertReflectionEquals(createdDog, dog);
-        assertReflectionEquals(foundDog, dog);
-    }
-
-    @Test
     public void createdDogCanBeFoundById() throws Exception {
         Dog createdDog = dogDao.create(randomDog());
         flush();
