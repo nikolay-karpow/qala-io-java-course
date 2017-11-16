@@ -31,16 +31,21 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     public void createDog_returnsDogWithNewId() throws Exception {
         Dog dog = randomDog();
         Dog createdDog = dogDao.create(dog);
+        flush();
+        clear();
         assertTrue(createdDog.getId() >= 0);
         dog.setId(createdDog.getId());
 
+        Dog foundDog = dogDao.findById(createdDog.getId());
         assertReflectionEquals(createdDog, dog);
+        assertReflectionEquals(foundDog, dog);
     }
 
     @Test
     public void createdDogCanBeFoundById() throws Exception {
         Dog createdDog = dogDao.create(randomDog());
-
+        flush();
+        clear();
         Dog foundDog = dogDao.findById(createdDog.getId());
 
         assertReflectionEquals(createdDog, foundDog);
@@ -56,6 +61,8 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     public void listAllGivesAllCreatedDogs() throws Exception {
         Dog firstDog = dogDao.create(randomDog());
         Dog secondDog = dogDao.create(randomDog());
+        flush();
+        clear();
 
         Collection<Dog> allDogs = dogDao.listAll();
 
@@ -70,6 +77,8 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
 
 
         Dog updatedDog = dogDao.update(createdDog);
+        flush();
+        clear();
         Dog foundDog = dogDao.findById(createdDog.getId());
 
         assertReflectionEquals(updatedDog, createdDog);
@@ -93,8 +102,11 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         Dog dog = randomDog();
         dogDao.create(dog);
 
+        flush();
+        clear();
         boolean deleteResult = dogDao.delete(dog.getId());
-
+        flush();
+        clear();
         assertTrue(deleteResult);
         assertFalse(dogDao.listAll().contains(dog));
     }
@@ -112,9 +124,11 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         dog.setName(alphanumeric(100));
 
         Dog createdDog = dogDao.create(dog);
+        flush();
+        clear();
 
-        dog.setId(createdDog.getId());
-        assertReflectionEquals(dog, createdDog);
+        Dog foundDog = dogDao.findById(createdDog.getId());
+        assertReflectionEquals(foundDog, createdDog);
     }
 
     @Test
@@ -123,8 +137,11 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         dog.setName("\"' blah");
 
         Dog createdDog = dogDao.create(dog);
+        flush();
+        clear();
 
-        assertEquals(createdDog.getName(), dog.getName());
+        Dog foundDog = dogDao.findById(createdDog.getId());
+        assertEquals(foundDog.getName(), dog.getName());
     }
 
 
@@ -147,5 +164,13 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         dog.setHeight(randomDog.getHeight());
         dog.setWeight(randomDog.getWeight());
         return dog;
+    }
+
+    private void clear() {
+        sessionFactory.getCurrentSession().clear();
+    }
+
+    private void flush() {
+        sessionFactory.getCurrentSession().flush();
     }
 }

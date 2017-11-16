@@ -1,6 +1,5 @@
 package com.nk.webapp;
 
-import com.nk.logging.Logged;
 import com.nk.validation.Name;
 
 import javax.validation.constraints.Min;
@@ -59,7 +58,7 @@ public class Dog {
     }
 
     public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+        this.birthday = new Date(birthday.getTime());
     }
 
     public int getHeight() {
