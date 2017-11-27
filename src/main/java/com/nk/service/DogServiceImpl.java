@@ -5,7 +5,6 @@ import com.nk.logging.Logged;
 import com.nk.webapp.Dog;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.Collection;
 
 public class DogServiceImpl implements DogService {
@@ -24,35 +23,35 @@ public class DogServiceImpl implements DogService {
     @Override
     @Logged
     @Transactional
-    public Dog create(Dog dog) throws SQLException {
+    public Dog create(Dog dog) {
         return dogDao.create(dog);
     }
 
     @Override
     @Logged
     @Transactional(readOnly = true)
-    public Dog findById(int id) throws SQLException {
+    public Dog findById(int id) {
         return dogDao.findById(id);
     }
 
     @Override
     @Logged
     @Transactional(readOnly = true)
-    public Collection<Dog> listAll() throws SQLException {
+    public Collection<Dog> listAll() {
         return dogDao.listAll();
     }
 
     @Override
     @Logged
     @Transactional
-    public Dog update(Dog dog) throws SQLException {
+    public Dog update(Dog dog) {
         return dogDao.update(dog);
     }
 
     @Override
     @Logged
     @Transactional
-    public boolean delete(int id) throws SQLException {
+    public boolean delete(int id) {
         return dogDao.delete(id);
     }
 }

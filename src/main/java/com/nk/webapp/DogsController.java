@@ -5,13 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import javax.validation.Valid;
 import java.net.URI;
-import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/")
@@ -24,20 +19,20 @@ public class DogsController {
     }
 
     @PostMapping(value = "/dog", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity createDog(@RequestBody @Valid Dog dog) throws SQLException {
+    public ResponseEntity createDog(@RequestBody @Valid Dog dog) {
         return ResponseEntity
-                .created(URI.create("/dog/" + dogService.create(dog).getId()))
-                .build();
+            .created(URI.create("/dog/" + dogService.create(dog).getId()))
+            .build();
     }
 
     @PutMapping(value = "/dog")
-    public ResponseEntity replaceDog(@RequestBody @Valid Dog dog) throws SQLException {
+    public ResponseEntity replaceDog(@RequestBody @Valid Dog dog) {
         dogService.update(dog);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/dog/{id}")
-    public ResponseEntity getDog(@PathVariable int id) throws SQLException {
+    public ResponseEntity getDog(@PathVariable int id) {
         Dog dog = dogService.findById(id);
         if (dog != null) {
             return ResponseEntity.ok(dog);
@@ -46,13 +41,13 @@ public class DogsController {
     }
 
     @GetMapping(value = "/dog")
-    public ResponseEntity getListOfDogs() throws SQLException {
+    public ResponseEntity getListOfDogs() {
         return ResponseEntity.ok(dogService.listAll());
     }
 
     @DeleteMapping(value = "/dog/{id}")
-    ResponseEntity deleteDog(@PathVariable int id) throws SQLException {
-        if (dogService.delete(id)){
+    ResponseEntity deleteDog(@PathVariable int id) {
+        if (dogService.delete(id)) {
             return ResponseEntity.ok("Dog is deleted");
         }
         return ResponseEntity.notFound().build();
