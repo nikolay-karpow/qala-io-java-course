@@ -23,6 +23,7 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 @ActiveProfiles("hibernate")
 @Transactional
 public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContextTests {
+
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -32,8 +33,7 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     @Test
     public void createdDogCanBeFoundById() throws Exception {
         Dog createdDog = dogDao.create(randomDog());
-        flush();
-        clear();
+        flushAndClear();
         Dog foundDog = dogDao.findById(createdDog.getId());
 
         assertReflectionEquals(createdDog, foundDog);
@@ -49,8 +49,7 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     public void listAllGivesAllCreatedDogs() throws Exception {
         Dog firstDog = dogDao.create(randomDog());
         Dog secondDog = dogDao.create(randomDog());
-        flush();
-        clear();
+        flushAndClear();
 
         Collection<Dog> allDogs = dogDao.listAll();
 
@@ -59,14 +58,13 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     }
 
     @Test
-    public void updateReplacesDogWhichWasSavedBefor() throws Exception {
+    public void updateReplacesDogWhichWasSavedBefore() throws Exception {
         Dog createdDog = dogDao.create(randomDog());
         createdDog = updateFieldsToRandomValues(createdDog);
 
 
         Dog updatedDog = dogDao.update(createdDog);
-        flush();
-        clear();
+        flushAndClear();
         Dog foundDog = dogDao.findById(createdDog.getId());
 
         assertReflectionEquals(updatedDog, createdDog);
@@ -74,27 +72,13 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
     }
 
     @Test
-    public void updateThrowsExceptionWhenThereIsNoDogWithSuchId() throws Exception {
-        Dog dog = randomDog();
-
-        try {
-            dogDao.update(dog);
-            fail("Must not be executed");
-        } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "Dog with id [" + dog.getId() + "] is not found");
-        }
-    }
-
-    @Test
     public void deleteDogReturnsTrue_whenDogIsFoundAndDeleted() throws Exception {
         Dog dog = randomDog();
         dogDao.create(dog);
 
-        flush();
-        clear();
+        flushAndClear();
         boolean deleteResult = dogDao.delete(dog.getId());
-        flush();
-        clear();
+        flushAndClear();
         assertTrue(deleteResult);
         assertFalse(dogDao.listAll().contains(dog));
     }
@@ -112,8 +96,7 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         dog.setName(alphanumeric(100));
 
         Dog createdDog = dogDao.create(dog);
-        flush();
-        clear();
+        flushAndClear();
 
         Dog foundDog = dogDao.findById(createdDog.getId());
         assertReflectionEquals(foundDog, createdDog);
@@ -125,8 +108,7 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         dog.setName("\"' blah");
 
         Dog createdDog = dogDao.create(dog);
-        flush();
-        clear();
+        flushAndClear();
 
         Dog foundDog = dogDao.findById(createdDog.getId());
         assertEquals(foundDog.getName(), dog.getName());
@@ -161,8 +143,7 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
             add(backLeft);
         }});
         dogDao.update(createdDog);
-        flush();
-        clear();
+        flushAndClear();
         Dog foundDog = dogDao.findById(createdDog.getId());
         foundDog.getPaws().stream()
             .map(Paw::getName)
@@ -178,11 +159,8 @@ public class HibernateDogDaoTest extends AbstractTransactionalTestNGSpringContex
         return dog;
     }
 
-    private void clear() {
-        sessionFactory.getCurrentSession().clear();
-    }
-
-    private void flush() {
+    private void flushAndClear() {
         sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
     }
 }

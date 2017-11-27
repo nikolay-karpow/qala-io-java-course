@@ -11,7 +11,7 @@
         <property name="birthday"/>
         <property name="height"/>
         <property name="weight"/>
-        <set name="paws" table="Paw" inverse="true" lazy="true" fetch="select">
+        <set name="paws" table="Paw" inverse="true" lazy="false">
             <key><column name="dogId" not-null="true" /></key>
             <one-to-many class="com.nk.webapp.Paw"/>
         </set>

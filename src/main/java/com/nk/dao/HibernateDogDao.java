@@ -32,11 +32,8 @@ public class HibernateDogDao implements DogDao {
 
     @Override
     public Dog update(Dog dog) {
-        if (session().get(Dog.class, dog.getId()) != null) {
-            session().merge(dog);
-            return dog;
-        }
-        throw new IllegalArgumentException("Dog with id [" + dog.getId() + "] is not found");
+        session().saveOrUpdate(dog);
+        return dog;
     }
 
     @Override
